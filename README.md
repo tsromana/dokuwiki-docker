@@ -1,44 +1,50 @@
-DokuWiki docker container
-=========================
+# DokuWiki docker container
 
+This is a fork of mparsil/dokuwiki, where this docker image lets you mount volumes directly rather then through docker containers (though this should work too).
 
-To run image:
--------------
+## To run image:
 
-	docker run -d -p 80:80 --name my_wiki mprasil/dokuwiki 
+For a quick run, run as
+
+    docker run -d -p 80:80 --name my_wiki deadleg/dokuwiki 
 
 You can now visit the install page to configure your new DokuWiki wiki.
 
 For example, if you are running container locally, you can acces the page 
 in browser by going to http://127.0.0.1/install.php
 
-To upate the image:
--------------------
+### Using data containers:
 
-First stop your container
+To save data using volume containers, create a new container with
 
-	docker stop my_wiki
+    docker run --volumes-from my_wiki --name my_wiki_data busybox true
 
-Then run new container just to hold the volumes
+To start a container with the above volumes, use the command
 
-	docker run --volumes-from my_wiki --name my_wiki_data busybox true
+    docker run -d -p 80:80 --name my_wiki --volumes-from my_wiki_data deadleg/dokuwiki
 
-Now you can remove old container
+### Using volumes from host:
 
-	docker rm my_wiki
+You will need the add the following volumes from the host
 
-..and run a new one (you built, pulled before)
+* dokuwiki/data
+* dokuwiki/lib/plugins
+* dokuwiki/lib/tpl
+* dokuwiki/conf
 
-	docker run -d -p 80:80 --name my_wiki --volumes-from my_wiki_data mprasil/dokuwiki 
+E.g. add the commands
 
-afterwards you can remove data container if you want
+    -v /host/dokuwiki/data:/dokuwiki/data -v /host/dokuwiki/lib/plugins:/dokuwiki/lib/plugins -v /host/dokuwiki/lib/tpl:/dokuwiki/lib/tpl -v /host/dokuwiki/conf:/dokuwiki/conf
 
-	docker rm my_wiki_data
+The host folders _must_ be writable by the `www-data` (UID 33, GID 33).
 
-(or keep it for next update, takes no space anyway..)
+If you are mounting these folders from a samba share, you can add some combination of the following to your mounting options:
 
-Optimizing your wiki
---------------------
+    uid=33,gid=33,forceuid,forcegid,noperm,file_mode=0777,dir_mode=0777
+    
+(These are probably not all needed, setting the uid and gid might be sufficient).
+
+# Optimizing your wiki
 
 Lighttpd configuration also includes rewrites, so you can enable 
 nice URLs in settings (Advanced -> Nice URLs, set to ".htaccess")
@@ -46,7 +52,6 @@ nice URLs in settings (Advanced -> Nice URLs, set to ".htaccess")
 For better performance enable xsendfile in settings.
 Set to proprietary lighttpd header (for lighttpd < 1.5)
 
-Build your own
---------------
+# Build your own
 
 	docker build -t my_dokuwiki .

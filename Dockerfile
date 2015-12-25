@@ -1,12 +1,5 @@
-# VERSION 0.1
-# AUTHOR:         Miroslav Prasil <miroslav@prasil.info>
-# DESCRIPTION:    Image with DokuWiki & lighttpd
-# TO_BUILD:       docker build -t mprasil/dokuwiki .
-# TO_RUN:         docker run -d -p 80:80 --name my_wiki mprasil/dokuwiki
-
-
 FROM ubuntu:14.04
-MAINTAINER Miroslav Prasil <miroslav@prasil.info>
+MAINTAINER William Kerrigan <Deadleg@gmail.com>
 
 # Set the version you want of Twiki
 ENV DOKUWIKI_VERSION 2015-08-10a
@@ -38,8 +31,10 @@ ADD dokuwiki.conf /etc/lighttpd/conf-available/20-dokuwiki.conf
 RUN lighty-enable-mod dokuwiki fastcgi accesslog
 RUN mkdir /var/run/lighttpd && chown www-data.www-data /var/run/lighttpd
 
+RUN cp -r /dokuwiki/data /dokuwiki/data-original && cp -r /dokuwiki/lib /dokuwiki/lib-original && cp -r /dokuwiki/conf /dokuwiki/conf-original
+
 EXPOSE 80
 VOLUME ["/dokuwiki/data/","/dokuwiki/lib/plugins/","/dokuwiki/conf/","/dokuwiki/lib/tpl/","/var/log/"]
 
-ENTRYPOINT ["/usr/sbin/lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]
+CMD cp -rn /dokuwiki/data-original/* /dokuwiki/data && cp -rn /dokuwiki/lib-original/* /dokuwiki/lib && cp -rn /dokuwiki/conf-original/* /dokuwiki/conf && /usr/sbin/lighttpd -D -f /etc/lighttpd/lighttpd.conf
 
