@@ -1,12 +1,12 @@
 # DokuWiki docker container
 
-This is a fork of mparsil/dokuwiki, where this docker image lets you mount volumes directly rather then through docker containers (though this should work too).
+This is a fork of mparsil/dokuwiki, where this docker image lets you mount volumes directly from the host rather then through docker containers (though this should continue to work too).
 
 ## To run image:
 
-For a quick run, run as
+For a quick run, build the image then as run as
 
-    docker run -d -p 80:80 --name my_wiki deadleg/dokuwiki 
+    docker run -d -p 80:80 --name my_wiki {{ your tag }}
 
 You can now visit the install page to configure your new DokuWiki wiki.
 
@@ -36,7 +36,7 @@ E.g. add the commands
 
     -v /host/dokuwiki/data:/dokuwiki/data -v /host/dokuwiki/lib/plugins:/dokuwiki/lib/plugins -v /host/dokuwiki/lib/tpl:/dokuwiki/lib/tpl -v /host/dokuwiki/conf:/dokuwiki/conf
 
-The host folders _must_ be writable by the `www-data` (UID 33, GID 33).
+The host folders _must_ be writable by the `www-data` user (UID 33, GID 33).
 
 If you are mounting these folders from a samba share, you can add some combination of the following to your mounting options:
 
