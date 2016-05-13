@@ -55,3 +55,4 @@ Set to proprietary lighttpd header (for lighttpd < 1.5)
 # Build your own
 
 	docker build -t my_dokuwiki .
+docker run --publish 80:80 -v /home/romana/dokuwiki/data:/dokuwiki/data -v /home/romana/dokuwiki/lib/plugins:/dokuwiki/lib/plugins -v /home/romana/dokuwiki/lib/tpl:/dokuwiki/lib/tpl -v /home/romana/dokuwiki/conf:/dokuwiki/conf --name dokuwiki1 --restart always --detach dokuwiki
